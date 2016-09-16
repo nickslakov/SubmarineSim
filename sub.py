@@ -11,13 +11,15 @@ class Sub:
         self.alpha = 0.0
         self.mass = 10 #kilos
         self.I = self.calcI()
-        self.shape = [vec.Vector(1.0,1.0), vec.Vector(-1.0,1.0), vec.Vector(-1.0,-1.0), vec.Vector(1.0,-1.0)]
+        self.shape = [vec.Vector(0.25,0.5), vec.Vector(-0.25,0.5), vec.Vector(-0.25,-0.5), vec.Vector(0.25,-0.5)]
+        self.height = self.shape[0].add(self.shape[3]).length()
+        self.width = self.shape[0].add(self.shape[1]).length()
+        self.depth = 0.5
         self.motorThrust = vec.Vector(0.0,-1.0)
 
 
-
     #This is the method that updates the position, velocity, and acceleration of the submarine.
-    #WaterFlow is in units of kg/s
+    #WaterFlow is in units of m/s
     def update(self, deltaTime, waterFlow):
         self.position.x += self.velocity.x * deltaTime
         self.position.y += self.velocity.y * deltaTime
@@ -39,11 +41,19 @@ class Sub:
         self.alpha = moment / self.I
 
     def calcNetForce(self, waterFlow):
-        return vec.Vector(0.0, 0.0)
+
+        #Perform rotate the waterflow vecor into the submarine co-ordinate system
+        waterFlow.rotate(self.theta)
+        force = vec.Vector((waterFlow.x)^2*1000*self.height*self.depth, (waterFlow.y)^2*1000*self.width*self.depth)
+        force.rotate(-self.theta)
+        waterFlow.rotate(-self.theta)
+
+        return force
 
     # 0 as long as the sub is symmetrical about the origin
     def calcNetMoment(self):
         return 0.0
+
 
     #Calculates the area moment of inertia of the shape using the general plane polygon formula
     def calcI(self):
@@ -61,3 +71,6 @@ class Sub:
             i += 1
 
         return self.mass * numerator / (6 * denominator)
+
+
+

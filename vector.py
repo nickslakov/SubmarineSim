@@ -17,3 +17,7 @@ class Vector:
     def rotate(self, theta):
         self.x = math.cos(theta) * self.x - math.sin(theta) * self.y
         self.y = math.sin(theta) * self.x + math.cos(theta) * self.y
+
+    def add(self, vec2):
+        return Vector(self.x + vec2.x , self.y + vec2.y)
+

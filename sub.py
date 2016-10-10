@@ -40,6 +40,8 @@ class Sub:
 
         self.alpha = moment / self.I
 
+        return [self.position, self.motorThrust]
+
     def calcNetForce(self, waterFlow):
 
         #Perform rotate the waterflow vecor into the submarine co-ordinate system

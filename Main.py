@@ -16,6 +16,10 @@ sub = uBoat.Sub() #Initialize the submarine instance
 
 print waterFlow.x, waterFlow.y
 
+f = open('Output.txt' 'w')
+f.write(str(waterFlow.x) + ' ' + str(waterFlow.y))
+f.close()
+
 #Initialize the simulation window
 window = tk.Tk()
 c = tk.Canvas(window, bg = "grey", height = height, width = width )
@@ -25,12 +29,33 @@ shape = c.create_polygon(25, 50, -25, 50, -25, -50, 25, -50, fill="orange")
 x = sub.position.x
 y = sub.position.y
 
+data = list()
+
+def writeFile(vals):
+    f = open('Output.txt', 'a')
+    for val in vals:
+        f.write(str(val.x) + ' ' + str(val.y) + ' ')
+    f.write('\n')
+    f.close()
+
+i = 0
+
 while True:
     c.coords(shape, x + 25, y + 50, x - 25, y + 50, x - 25, y - 50, x + 25, y - 50)
     c.update()
-    sub.update(deltaT, waterFlow)
+    data.append(sub.update(deltaT, waterFlow))
+    writeFile(data[i])
     x = sub.position.x
     y = sub.position.y
     time.sleep(deltaT)
+    i += 1
+    if i%25 == 0:
+        print str(data[i-1][0].x) + ' ' + str(data[i-1][0].y)
 
 window.mainloop()
+
+
+
+
+
+

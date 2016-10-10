@@ -61,7 +61,7 @@ updates = lasagne.updates.adam(all_grads, all_params, learning_rate=0.005)
 
 # Compile the Theano functions.
 train_func = theano.function(inputs = [x_sym, y_sym], outputs = [cost_train, train_model], updates=updates)
-eval_func = theano.function([x_sym, y_sym], [cost_eval, eval_model])
+eval_func = theano.function(inputs = [x_sym, y_sym], outputs = [cost_eval, eval_model])
 
 
 

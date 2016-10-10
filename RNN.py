@@ -48,5 +48,21 @@ eval_out = eval_model.eval({x_sym:X})
 # All trainable params in the network
 all_params = lasagne.layers.get_all_params(l_out, trainable=True)
 
+# Define the Cost Function
+cost_train = lasagne.objectives.squared_error(train_out, y_sym).mean()
+cost_eval = lasagne.objectives.squared_error(eval_out, y_sym).mean()
+
+# Use Theano to compute all of the gradients. Included gradient clipping to avoid gradient explosion.
+all_grads = [T.clip(g,-3,3) for g in T.grad(cost_train, all_params)]
+all_grads = lasagne.updates.total_norm_constraint(all_grads,3) #Could modify the clipping values if needed.
+
+# Compile the update gradient.
+updates = lasagne.updates.adam(all_grads, all_params, learning_rate=0.005)
+
+# Compile the Theano functions.
+train_func = theano.function(inputs = [x_sym, y_sym], outputs = [cost_train, train_model], updates=updates)
+eval_func = theano.function([x_sym, y_sym], [cost_eval, eval_model])
+
+
 
 

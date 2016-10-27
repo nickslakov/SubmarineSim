@@ -1,5 +1,6 @@
 import vector as vec
 import math
+import random as rng
 class Sub:
 
     def __init__(self):
@@ -16,6 +17,8 @@ class Sub:
         self.width = 0.5
         self.depth = 0.5
         self.motorThrust = vec.Vector(0.0,0.0)
+        self.MOTOR_DELTA = 5
+
 
 
     #This is the method that updates the position, velocity, and acceleration of the submarine.
@@ -28,6 +31,9 @@ class Sub:
         self.velocity.y += self.acceleration.y * deltaTime
 
         force = self.calcNetForce(waterFlow)
+
+        self.motorThrust.x += 2 * (rng.random() - 0.5) * self.MOTOR_DELTA
+        self.motorThrust.y += 2 * (rng.random() - 0.5)* self.MOTOR_DELTA
 
         self.acceleration.x = force.x / self.mass
         self.acceleration.y = force.y / self.mass

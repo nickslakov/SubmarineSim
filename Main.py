@@ -16,7 +16,7 @@ sub = uBoat.Sub() #Initialize the submarine instance
 
 print waterFlow.x, waterFlow.y
 
-f = open('Output.txt' 'w')
+f = open('Output.txt', 'w')
 f.write(str(waterFlow.x) + ' ' + str(waterFlow.y))
 f.close()
 
@@ -47,15 +47,17 @@ while True:
     writeFile(data[i])
     x = sub.position.x
     y = sub.position.y
+
+    if i % 50 == 0:
+        print sub.motorThrust.x, sub.motorThrust.y
+
     time.sleep(deltaT)
     i += 1
-    if i%25 == 0:
-        print str(data[i-1][0].x) + ' ' + str(data[i-1][0].y)
 
 window.mainloop()
 
 
-
+#def generateData():
 
 
 

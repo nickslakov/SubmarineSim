@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 #from IPython import display
 
 
-def RNN(data):
+def rnn(data):
 
     #Start of Network
 
@@ -34,12 +34,12 @@ def RNN(data):
     eval_model = lasagne.layers.get_output(l_out, x_sym, deterministic = True)
 
     #Print shape of output
-    print train_model.eval({x_sym:X}).shape
-    print Y.shape
+    #print train_model.eval({x_sym:X}).shape
+    #print Y.shape
 
     # Get outputs from network
-    train_out = train_model.eval({x_sym:X})
-    eval_out = eval_model.eval({x_sym:X})
+    train_out = train_model #.eval({x_sym:X})
+    eval_out = eval_model #.eval({x_sym:X})
 
     # All trainable params in the network
     all_params = lasagne.layers.get_all_params(l_out, trainable=True)
@@ -69,8 +69,13 @@ def RNN(data):
 
     train_cost, val_cost = [],[]
 
-    for e in range(num_epochs):
-        out = train_func(X,Y)
+    for e in range(len(data) - 1):
+        x_vec = data[e]
+        y_vec = data[e + 1][1]
+        x_current = [x_vec[0].x, x_vec[0].y, x_vec[1].x, x_vec[1].x, x_vec[2].x, x_vec[2].y]
+        y_current = [y_vec[0].x, y_vec[0].y]
+
+        out = train_func(x_current,y_current)
         train_cost += [out[0]]
 
      #  out = eval_func(X,Y)

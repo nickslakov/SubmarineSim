@@ -16,8 +16,9 @@ class Sub:
         self.height = 1
         self.width = 0.5
         self.depth = 0.5
-        self.motorThrust = vec.Vector(0.0,0.0)
-        self.MOTOR_DELTA = 5
+        self.motorThrust = vec.Vector(0.0,0.0) #Newtons
+        self.MOTOR_DELTA = 1
+        self.MOTOR_CLIP = 5
 
 
 
@@ -34,6 +35,11 @@ class Sub:
 
         self.motorThrust.x += 2 * (rng.random() - 0.5) * self.MOTOR_DELTA
         self.motorThrust.y += 2 * (rng.random() - 0.5)* self.MOTOR_DELTA
+
+        if motorThrust.x > MOTOR_CLIP:
+            motorThrust.x = MOTOR_CLIP
+        if motorThrust.y > MOTOR_CLIP:
+            motorThrust.y = MOTOR_CLIP
 
         self.acceleration.x = force.x / self.mass
         self.acceleration.y = force.y / self.mass

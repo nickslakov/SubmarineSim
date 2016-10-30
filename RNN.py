@@ -66,18 +66,27 @@ def RNN(data):
     #Training Loop
 
     num_epochs = 1000
+    current_epoch = 0
 
+    num_updates = []
     train_cost, val_cost = [],[]
 
     for e in range(num_epochs):
         out = train_func(X,Y)
         train_cost += [out[0]]
 
+        current_epoch += 1
      #  out = eval_func(X,Y)
     #   val_cost += [out[0]]
 
         if e % 100 == 0:
-            print("Epoch %i, Train Cost: %0.3f\tVal Cost: %0.3f"%(e, train_cost[-1], val_cost[-1]))
+            num_updates += [current_epoch]
+            plt.plot(num_updates,train_cost)
+            plt.xlabel('Samples Processed', fontsize = 15)
+            plt.ylabel('Training Cost', fontsize = 15)
+            plt.title('Training Squared Error in Position Estimate' , fontsize = 20)
+            plt.grid('on')
+
 
 
 

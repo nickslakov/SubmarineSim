@@ -68,7 +68,9 @@ while i < ITERATIONS:
     #time.sleep(deltaT)
     i += 1
 
-rnn(data)
+
+print "Calling rnn"
+RNN.rnn(data)
 
 
 #window.mainloop()

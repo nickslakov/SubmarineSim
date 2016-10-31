@@ -36,10 +36,10 @@ class Sub:
         self.motorThrust.x += 2 * (rng.random() - 0.5) * self.MOTOR_DELTA
         self.motorThrust.y += 2 * (rng.random() - 0.5)* self.MOTOR_DELTA
 
-        if motorThrust.x > MOTOR_CLIP:
-            motorThrust.x = MOTOR_CLIP
-        if motorThrust.y > MOTOR_CLIP:
-            motorThrust.y = MOTOR_CLIP
+        if self.motorThrust.x > self.MOTOR_CLIP:
+            self.motorThrust.x = self.MOTOR_CLIP
+        if self.motorThrust.y > self.MOTOR_CLIP:
+            self.motorThrust.y = self.MOTOR_CLIP
 
         self.acceleration.x = force.x / self.mass
         self.acceleration.y = force.y / self.mass

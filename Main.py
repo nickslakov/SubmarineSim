@@ -13,8 +13,8 @@ height = 750 #Height and width of window
 width = 1000
 WATER_DELTA = 0.5
 WATER_CLIP = 2
-NUM_BATCHES = 10
-BATCH_SIZE = 50
+NUM_BATCHES = 20
+BATCH_SIZE = 10
 SEQUENCE_LENGTH = 50
 
 

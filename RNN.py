@@ -11,9 +11,9 @@ def rnn(data):
 
     #Start of Network
 
-
-    BATCH_SIZE = 1
-    SEQUENCE_LENGTH = 1
+    NUM_BATCHES = 10
+    BATCH_SIZE = 50
+    SEQUENCE_LENGTH = 50
     NUM_INPUTS = 6
     NUM_OUTPUTS = 2
     CLIP_VAL = 1000
@@ -25,13 +25,11 @@ def rnn(data):
     y_sym = T.vector() # Symbolic target outputs
 
     l_in = lasagne.layers.InputLayer(shape = (BATCH_SIZE, SEQUENCE_LENGTH, NUM_INPUTS))
-    l_hid1 = lasagne.layers.RecurrentLayer(l_in, num_units=25)
-    l_hid2 = lasagne.layers.RecurrentLayer(l_hid1, num_units=50)
-    l_hid3 = lasagne.layers.RecurrentLayer(l_hid2, num_units=25)
-    l_out = lasagne.layers.DenseLayer(l_hid3, num_units=NUM_OUTPUTS)
+    l_hid1 = lasagne.layers.GRULayer(l_in, num_units=25)
+    l_out = lasagne.layers.DenseLayer(l_hid1, num_units=NUM_OUTPUTS)
 
     train_out = lasagne.layers.get_output(l_out, {l_in: x_sym}, deterministic = False)
-    eval_model = lasagne.layers.get_output(l_out, {l_in: x_sym}, deterministic = True)
+    #eval_model = lasagne.layers.get_output(l_out, {l_in: x_sym}, deterministic = True)
 
     #Print shape of output
     #print train_model.eval({x_sym:X}).shape
@@ -71,24 +69,23 @@ def rnn(data):
 
     num_updates = []
     train_cost, val_cost = [],[]
-    x_current = np.zeros((1,1,6))
+    x_current = np.zeros((BATCH_SIZE,SEQUENCE_LENGTH,6))
+    y_current = np.zeros((BATCH_SIZE,SEQUENCE_LENGTH,2))
 
-    for e in range(len(data) - 1):
-        x_vec = data[e]
-        y_vec = data[e + 1][0]
-        x_current[0][0] = [x_vec[0].x, x_vec[0].y, x_vec[1].x, x_vec[1].x, x_vec[2].x, x_vec[2].y]
-        y_current = [y_vec.x, y_vec.y]
+    for e in range(NUM_BATCHES - 1):
+        x_current = data[e]
+        y_current = data[e + 1][:][:][:1]
 
         out = train_func(x_current,y_current)
         train_cost += [out[0]]
 
         current_epoch += 1
      #  out = eval_func(X,Y)
-    #   val_cost += [out[0]]
+     #  val_cost += [out[0]]
 
-        if e % 1000 == 0:
-            print train_cost[-1]
-            print len(train_cost)
+        #if e % 1000 == 0:WARNING (theano.gof.compilelock): Overriding existing lock by dead process '10928' (I am process '9276')
+        print train_cost[-1]
+        print len(train_cost)
             #num_updates = np.arange(0, e + 1, 1)
 
             #plt.plot(num_updates, train_cost)

@@ -13,12 +13,18 @@ height = 750 #Height and width of window
 width = 1000
 WATER_DELTA = 0.5
 WATER_CLIP = 2
-ITERATIONS = 5000
+NUM_BATCHES = 10
+BATCH_SIZE = 50
+SEQUENCE_LENGTH = 50
 
 
 #Vector components are computed using a uniform random variable
 waterFlow = vec.Vector(np.random.uniform(-magnitude,magnitude),np.random.uniform(-magnitude,magnitude))
-sub = uBoat.Sub() #Initialize the submarine instance
+
+subs = []
+
+for i in range(NUM_BATCHES*BATCH_SIZE):
+    subs.append(uBoat.Sub()) #Initialize the submarine instances
 
 print waterFlow.x, waterFlow.y
 
@@ -32,10 +38,8 @@ f.close()
 #c.pack()
 
 #shape = c.create_polygon(25, 50, -25, 50, -25, -50, 25, -50, fill="orange")
-x = sub.position.x
-y = sub.position.y
 
-data = list()
+data = np.zeros((NUM_BATCHES,BATCH_SIZE,SEQUENCE_LENGTH,6))
 
 def writeFile(vals):
     f = open('Output.txt', 'a')
@@ -46,27 +50,24 @@ def writeFile(vals):
 
 i = 0
 
-while i < ITERATIONS:
-    #c.coords(shape, x + 25, y + 50, x - 25, y + 50, x - 25, y - 50, x + 25, y - 50)
-    #c.update()
-    data.append(sub.update(deltaT, waterFlow))
-    #writeFile(data[i])
-    data[i] += [waterFlow]
-    waterFlow.x += 2 * (rng.random() - 0.5) * WATER_DELTA
-    waterFlow.y += 2 * (rng.random() - 0.5) * WATER_DELTA
+for i in range(NUM_BATCHES):
+    for j in range(BATCH_SIZE):
+       for sub in subs:
+           for k in range(SEQUENCE_LENGTH):
+                current_positionVec, current_thrustVec = sub.update(deltaT,waterFlow)
+                data_timestep = [current_positionVec.x, current_positionVec.y,current_thrustVec.x, current_thrustVec.y, waterFlow.x, waterFlow.y]
 
-    if waterFlow.x > WATER_CLIP:
-        waterFlow.x = WATER_CLIP
-    if waterFlow.y > WATER_CLIP:
-        waterFlow.y = WATER_CLIP
-    #x = sub.position.x
-    #y = sub.position.y
+                #writeFile(data[i])
+                data[i][j][k] = data_timestep
 
-    #if i % 50 == 0:
-     #   print sub.motorThrust.x, sub.motorThrust.y
+                waterFlow.x += 2 * (rng.random() - 0.5) * WATER_DELTA
+                waterFlow.y += 2 * (rng.random() - 0.5) * WATER_DELTA
 
-    #time.sleep(deltaT)
-    i += 1
+                if waterFlow.x > WATER_CLIP:
+                    waterFlow.x = WATER_CLIP
+                if waterFlow.y > WATER_CLIP:
+                    waterFlow.y = WATER_CLIP
+
 
 
 print "Calling rnn"

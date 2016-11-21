@@ -5,32 +5,24 @@ import numpy as np
 import Tkinter as tk
 import time
 import random as rng
+import matplotlib.pyplot as plt
 
-magnitude = 1.0  #Max value of fluid flow (m/s)
-deltaT = 0.05    #Timestep (s)
+deltaT = 0.01    #Timestep (s)
 timer = 0
 height = 750 #Height and width of window
 width = 1000
-WATER_DELTA = 0.5
-WATER_CLIP = 2
-NUM_BATCHES = 20
-BATCH_SIZE = 10
-SEQUENCE_LENGTH = 50
-
-
-#Vector components are computed using a uniform random variable
-waterFlow = vec.Vector(np.random.uniform(-magnitude,magnitude),np.random.uniform(-magnitude,magnitude))
+NUM_SUBS = 10000
+SEQUENCE_LENGTH = 35
 
 subs = []
 
-for i in range(NUM_BATCHES*BATCH_SIZE):
-    subs.append(uBoat.Sub()) #Initialize the submarine instances
+for i in range(NUM_SUBS):
+    subs.append(uBoat.Sub())
 
-print waterFlow.x, waterFlow.y
 
-f = open('Output.txt', 'w')
-f.write(str(waterFlow.x) + ' ' + str(waterFlow.y))
-f.close()
+#f = open('Output.txt', 'w')
+#f.write(str(waterFlow.x) + ' ' + str(waterFlow.y))
+#f.close()
 
 #Initialize the simulation window
 #window = tk.Tk()
@@ -39,7 +31,7 @@ f.close()
 
 #shape = c.create_polygon(25, 50, -25, 50, -25, -50, 25, -50, fill="orange")
 
-data = np.zeros((NUM_BATCHES,BATCH_SIZE,SEQUENCE_LENGTH,6))
+data = np.zeros((NUM_SUBS,SEQUENCE_LENGTH,6))
 
 def writeFile(vals):
     f = open('Output.txt', 'a')
@@ -49,28 +41,23 @@ def writeFile(vals):
     f.close()
 
 i = 0
+for sub in subs:
+    for j in range(SEQUENCE_LENGTH):
+        current_positionVec, current_thrustVec, current_waterFlow = sub.update(deltaT)
+        data_timestep = [10*current_positionVec.x, 10*current_positionVec.y,current_thrustVec.x, current_thrustVec.y, current_waterFlow.x, current_waterFlow.y]
 
-for i in range(NUM_BATCHES):
-    for j in range(BATCH_SIZE):
-       for sub in subs:
-           for k in range(SEQUENCE_LENGTH):
-                current_positionVec, current_thrustVec = sub.update(deltaT,waterFlow)
-                data_timestep = [current_positionVec.x, current_positionVec.y,current_thrustVec.x, current_thrustVec.y, waterFlow.x, waterFlow.y]
-
-                #writeFile(data[i])
-                data[i][j][k] = data_timestep
-
-                waterFlow.x += 2 * (rng.random() - 0.5) * WATER_DELTA
-                waterFlow.y += 2 * (rng.random() - 0.5) * WATER_DELTA
-
-                if waterFlow.x > WATER_CLIP:
-                    waterFlow.x = WATER_CLIP
-                if waterFlow.y > WATER_CLIP:
-                    waterFlow.y = WATER_CLIP
+        #writeFile(data[i])
+        data[i,j,:] = data_timestep
+    i += 1
 
 
+fig, ax = plt.subplots()
+ax.plot(data[0,:,0], data[0,:,1], '.b-')
+ax.plot(data[1,:,0], data[1,:,1], '.r-')
+ax.plot(data[2,:,0], data[2,:,1], '.g-')
+plt.show()
 
-print "Calling rnn"
+#print "Calling rnn"
 RNN.rnn(data)
 
 
